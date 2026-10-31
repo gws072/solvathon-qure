@@ -1,0 +1,1288 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>보건실 자가진단 1</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap">
+<style>
+/* Layout: one narrow column, one question group per screen, sticky progress on top and a fixed action bar at the bottom */
+:root {
+  --bg: #f3f6f5;
+  --surface: #ffffff;
+  --ink: #1c2b29;
+  --muted: #5c6e6b;
+  --line: #d5dfdc;
+  --accent: #127a6c;
+  --accent-ink: #ffffff;
+  --accent-soft: #dcefeb;
+  --red: #c2352b;
+  --red-soft: #fbe5e2;
+  --amber: #a86400;
+  --amber-soft: #fbefd9;
+  --beige: #ecd9b8; --beige-line: #b8935a; --beige-ink: #4a3516;
+  --green: #2f7d3a;
+  --green-soft: #e1f1e2;
+  --font-display: "Jua", "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --font-body: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111817; --surface: #1a2321; --ink: #e6efed; --muted: #9db0ac; --line: #2e3c39;
+    --accent: #4cc2ae; --accent-ink: #0b1a17; --accent-soft: #173431;
+    --red: #ff7b6e; --red-soft: #3a1c19; --amber: #f0b45a; --amber-soft: #352812; --beige: #d9bf92; --beige-line: #f0d7a8; --beige-ink: #2b1e0b;
+    --green: #7fcf88; --green-soft: #1a3020;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #111817; --surface: #1a2321; --ink: #e6efed; --muted: #9db0ac; --line: #2e3c39;
+  --accent: #4cc2ae; --accent-ink: #0b1a17; --accent-soft: #173431;
+  --red: #ff7b6e; --red-soft: #3a1c19; --amber: #f0b45a; --amber-soft: #352812; --beige: #d9bf92; --beige-line: #f0d7a8; --beige-ink: #2b1e0b;
+  --green: #7fcf88; --green-soft: #1a3020;
+  color-scheme: dark;
+}
+html, body { height: 100%; }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: var(--font-body); font-size: 17px; line-height: 1.55;
+  -webkit-tap-highlight-color: transparent;
+  word-break: keep-all;
+}
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+.wrap {
+  max-width: 560px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+header.top {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5;
+  background: var(--bg); border-bottom: 1px solid var(--line);
+}
+header.top .wrap { padding-block: 12px; display: flex; flex-direction: column; gap: 8px; }
+.brand { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.brand b { font-family: var(--font-display); font-weight: 400; font-size: 20px; color: var(--accent); }
+.brand span { font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.bar { height: 6px; background: var(--line); border-radius: 3px; overflow: hidden; }
+.bar i { display: block; height: 100%; background: var(--accent); transition: width .25s ease; }
+
+main .wrap { padding-block: 24px 140px; display: flex; flex-direction: column; gap: 28px; }
+h1 { font-family: var(--font-display); font-weight: 400; font-size: 30px; line-height: 1.25; margin: 0; text-wrap: balance; }
+.lead { margin: 6px 0 0; color: var(--muted); }
+
+.q { display: flex; flex-direction: column; gap: 10px; }
+.q > .label { font-weight: 600; font-size: 18px; }
+.q > .label small { font-weight: 400; color: var(--muted); font-size: 14px; margin-left: 6px; }
+.opts { display: flex; flex-wrap: wrap; gap: 8px; }
+.opt {
+  font: inherit; font-size: 16px; color: var(--ink);
+  background: var(--surface); border: 1.5px solid var(--line); border-radius: 12px;
+  padding: 10px 16px; min-height: 48px; cursor: pointer;
+}
+.opt[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.opt:focus-visible, .btn:focus-visible, input:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+/* emergency list: each row a sentence with 예/아니오 */
+.yn { display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); overflow: hidden; }
+.yn-row { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; padding: 12px 14px; border-top: 1px solid var(--line); }
+.yn-row:first-child { border-top: 0; }
+.yn-row p { margin: 0; min-width: 0; }
+.yn-row .pair { display: flex; gap: 6px; }
+.yn-row .opt { min-width: 64px; padding: 8px 12px; }
+.yn-row .opt.yes[aria-pressed="true"] { background: var(--red); border-color: var(--red); color: #fff; }
+@media (max-width: 420px) {
+  .yn-row { grid-template-columns: 1fr; gap: 8px; }
+  .yn-row .opt { flex: 1; }
+}
+
+.fields { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.fields .full { grid-column: 1 / -1; }
+.field { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.field label { font-size: 14px; color: var(--muted); }
+#f-pw { width: 100%; font-size: 24px; padding: 16px 18px; letter-spacing: .15em; border: 2px solid var(--line); border-radius: 12px; background: var(--surface); color: var(--ink); box-sizing: border-box; }
+#f-pw::placeholder { letter-spacing: 0; }
+#f-pw:focus { outline: none; border-color: var(--accent); }
+#lockForm .btn { flex: 0 0 auto; min-width: 120px; }
+input[type="text"], input[type="number"], textarea {
+  font: inherit; color: var(--ink); background: var(--surface);
+  border: 1.5px solid var(--line); border-radius: 12px; padding: 10px 12px; min-height: 48px; width: 100%; box-sizing: border-box;
+}
+textarea { min-height: 72px; resize: vertical; }
+
+.scale { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; }
+.scale .opt { padding: 10px 0; min-width: 0; text-align: center; font-variant-numeric: tabular-nums; }
+.scale-ends { display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); }
+@media (max-width: 420px) { .scale { grid-template-columns: repeat(5, 1fr); } }
+
+.sym-group { display: flex; flex-direction: column; gap: 8px; }
+.sym-title { font-weight: 600; color: var(--accent); }
+.note { font-size: 14px; color: var(--muted); border-left: 3px solid var(--line); padding-left: 10px; margin: 0; }
+
+.alert { border-radius: 16px; padding: 18px; background: var(--red-soft); color: var(--red); display: flex; flex-direction: column; gap: 6px; }
+.alert h2 { font-family: var(--font-display); font-weight: 400; font-size: 26px; margin: 0; }
+.alert p { margin: 0; color: var(--ink); }
+
+.summary { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 6px 16px; }
+.summary dl { margin: 0; display: grid; grid-template-columns: 7.5em 1fr; }
+.summary dt, .summary dd { padding: 9px 0; border-top: 1px solid var(--line); margin: 0; }
+.summary dt { color: var(--muted); font-size: 15px; }
+.summary dd { min-width: 0; overflow-wrap: anywhere; }
+.summary dt:first-of-type, .summary dd:first-of-type { border-top: 0; }
+.missing { color: var(--red); font-size: 15px; }
+
+.chip { display: inline-block; font-size: 14px; font-weight: 600; padding: 3px 10px; border-radius: 999px; }
+.chip.red { background: var(--red-soft); color: var(--red); }
+.chip.yellow { background: var(--amber-soft); color: var(--amber); }
+.chip.green { background: var(--green-soft); color: var(--green); }
+
+footer.actions {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 5;
+  background: var(--bg); border-top: 1px solid var(--line);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+footer.actions .wrap { padding-block: 12px; display: flex; gap: 10px; }
+.btn {
+  font: inherit; font-weight: 600; font-size: 17px; border-radius: 14px; min-height: 54px; padding: 0 18px; cursor: pointer;
+  border: 1.5px solid var(--line); background: var(--surface); color: var(--ink);
+}
+.btn.primary { flex: 1; background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn.danger { flex: 1; background: var(--red); border-color: var(--red); color: #fff; }
+.btn:disabled { opacity: .4; cursor: not-allowed; }
+
+.care { background: var(--green-soft); border-radius: 14px; padding: 14px 16px; display: flex; flex-direction: column; gap: 6px; }
+.care .label { font-weight: 600; color: var(--green); }
+.care ul { margin: 0; padding-left: 1.2em; display: grid; gap: 4px; }
+
+/* body map */
+.body-wrap { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.body-map { width: min(250px, 66vw); max-width: 100%; height: auto; touch-action: manipulation; }
+.body-part { cursor: pointer; outline: none; }
+.body-part .shape { fill: var(--surface); stroke: var(--muted); stroke-width: 1.5; transition: fill .15s; }
+.body-part .hit { fill: transparent; stroke: none; }
+.body-part text { font-family: var(--font-body); font-size: 13px; font-weight: 600; fill: var(--ink); text-anchor: middle; pointer-events: none; }
+.body-part:hover .shape { fill: var(--accent-soft); }
+.body-part[aria-pressed="true"] .shape { fill: var(--beige); stroke: var(--beige-line); }
+.body-part[aria-pressed="true"] text { fill: var(--beige-ink); }
+.body-part:focus-visible .shape { stroke: var(--accent); stroke-width: 3; }
+/* the face sits on the head: keep features visible when 머리 is selected */
+.body-part[data-val$="눈"] .shape, .body-part[data-val="코"] .shape, .body-part[data-val="입·턱"] .shape { fill: var(--bg); }
+.body-extra { justify-content: center; }
+.body-map .side-label { font-family: var(--font-body); font-size: 13px; font-weight: 700; fill: var(--accent); text-anchor: middle; }
+.body-map .seam { fill: none; stroke: var(--muted); stroke-width: 1.5; pointer-events: none; }
+.body-picked { margin: 0; color: var(--muted); font-size: 15px; text-align: center; }
+
+.red-list { display: flex; flex-direction: column; gap: 8px; }
+.red-item { text-align: left; }
+.opt.red-item[aria-pressed="true"], .opt.risky[aria-pressed="true"] { background: var(--red); border-color: var(--red); color: #fff; }
+.opt.safety-item[aria-pressed="true"], .opt.caution[aria-pressed="true"] { background: var(--amber); border-color: var(--amber); color: var(--accent-ink); }
+.body-extra .opt[aria-pressed="true"] { background: var(--beige); border-color: var(--beige-line); color: var(--beige-ink); }
+h1.danger-title { color: var(--red); }
+.optional-badge { display: inline-block; font-size: 22px; font-weight: 800; color: var(--red); border: 2px solid var(--red); border-radius: 10px; padding: 2px 14px; margin-bottom: 8px; }
+.red-none { align-self: stretch; font-weight: 600; }
+
+/* care plan */
+.plan { border-radius: 14px; padding: 14px 16px; background: var(--surface); border: 1px solid var(--line); display: flex; flex-direction: column; gap: 6px; }
+.plan .label { font-weight: 600; }
+.plan p, .plan ul { margin: 0; }
+.plan ul { padding-left: 1.2em; display: grid; gap: 4px; }
+.plan.wait { background: var(--amber-soft); border-color: transparent; }
+.plan.wait .label { color: var(--amber); }
+.plan.ok { background: var(--accent-soft); border-color: transparent; }
+.plan.ok .label { color: var(--accent); }
+.plan-box { display: flex; flex-direction: column; gap: 8px; padding: 10px 12px; border: 1.5px dashed var(--accent); border-radius: 10px; }
+.plan-box:not(.pending) { border-style: solid; border-color: var(--line); }
+.care-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.care-chip { font-size: 14px; padding: 3px 10px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); }
+.care-chip.drug { background: var(--amber-soft); color: var(--amber); }
+.care-chip.rest { background: var(--green-soft); color: var(--green); }
+.opt.approve { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+
+/* teacher queue */
+.t-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 12px; }
+.counts { display: flex; gap: 6px; flex-wrap: wrap; }
+.queue { display: flex; flex-direction: column; gap: 12px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-left: 6px solid var(--line); border-radius: 14px; padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.card.red { border-left-color: var(--red); }
+.card.yellow { border-left-color: var(--amber); }
+.card.green { border-left-color: var(--green); }
+.card.done { opacity: .6; }
+.card-top { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 12px; }
+.card-top b { font-size: 19px; }
+.card-top .time { color: var(--muted); font-size: 14px; font-variant-numeric: tabular-nums; margin-left: auto; }
+.card .main { margin: 0; }
+.checks { margin: 0; padding: 10px 12px 10px 28px; background: var(--amber-soft); border-radius: 10px; display: grid; gap: 4px; font-size: 15px; }
+.recent { background: var(--accent-soft); border-radius: 10px; padding: 10px 12px; display: grid; gap: 4px; font-size: 15px; }
+.recent ul { margin: 0; padding-left: 1.2em; display: grid; gap: 2px; }
+.checks-title { font-size: 14px; font-weight: 600; color: var(--amber); }
+.card details summary { cursor: pointer; color: var(--accent); font-size: 15px; }
+.card details .summary { margin-top: 8px; }
+.card-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.card-actions .opt { min-height: 40px; padding: 6px 12px; font-size: 15px; }
+.empty { background: var(--surface); border: 1px dashed var(--line); border-radius: 14px; padding: 24px 16px; color: var(--muted); text-align: center; }
+.teacher-link { font-size: 14px; color: var(--muted); }
+.teacher-link a { color: var(--accent); }
+
+.tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); }
+.tab { font: inherit; font-size: 16px; font-weight: 600; color: var(--muted); background: none; border: 0; border-bottom: 3px solid transparent; padding: 10px 12px; cursor: pointer; margin-bottom: -1px; }
+.tab[aria-selected="true"] { color: var(--accent); border-bottom-color: var(--accent); }
+.tab:focus-visible, .hist-row:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.hist-list { display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); overflow: hidden; }
+.hist-row { font: inherit; color: var(--ink); background: none; border: 0; border-top: 1px solid var(--line); text-align: left; cursor: pointer;
+  display: grid; grid-template-columns: 1fr auto auto; grid-template-areas: "sid n chip" "last last last"; gap: 2px 10px; align-items: center; padding: 12px 16px; }
+.hist-item { display: flex; align-items: center; gap: 4px; padding-left: 14px; border-top: 1px solid var(--line); }
+.hist-item:first-child { border-top: 0; }
+.hist-item .hist-row { flex: 1; min-width: 0; border-top: 0; }
+.hist-row b { grid-area: sid; font-size: 18px; font-variant-numeric: tabular-nums; }
+.hist-row .n { grid-area: n; color: var(--muted); font-size: 15px; }
+.hist-row .chip { grid-area: chip; }
+.hist-row .last { grid-area: last; color: var(--muted); font-size: 14px; }
+.hist-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px; margin-block: 12px 4px; }
+.hist-head b { font-size: 24px; font-variant-numeric: tabular-nums; }
+.hist-head span { color: var(--muted); }
+#histResults { display: flex; flex-direction: column; gap: 12px; align-items: stretch; }
+#histResults > .opt { align-self: flex-start; }
+.del-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 10px 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
+.del-bar .del-q { flex: 1 1 100%; color: var(--red); font-size: 15px; }
+.btn.small { min-height: 40px; font-size: 15px; padding: 0 14px; }
+.btn.small.danger { flex: 0 0 auto; }
+.pick-all { display: flex; align-items: center; gap: 6px; font-size: 15px; margin-right: auto; cursor: pointer; }
+.pick { display: inline-flex; align-items: center; cursor: pointer; }
+.pick input, .pick-all input { width: 22px; height: 22px; accent-color: var(--red); margin: 0; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.sid-link { font: inherit; font-size: 14px; color: var(--accent); background: none; border: 0; padding: 0; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+.sid-link:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+/* start + done screens */
+.hero { display: flex; flex-direction: column; gap: 14px; padding-top: 12px; }
+.hero h1 { font-size: 36px; }
+.steps-list { margin: 0; padding-left: 1.3em; color: var(--muted); display: grid; gap: 4px; }
+.done-mark {
+  width: 84px; height: 84px; border-radius: 50%; background: var(--accent-soft); color: var(--accent);
+  display: grid; place-items: center;
+}
+.done-mark svg { width: 44px; height: 44px; }
+@media (prefers-reduced-motion: no-preference) {
+  .done-mark { animation: pop .4s ease-out; }
+  @keyframes pop { from { transform: scale(.7); } to { transform: scale(1); } }
+}
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand"><b>보건실 자가진단</b><span id="stepLabel"></span></div>
+    <div class="bar"><i id="barFill" style="width:0%"></i></div>
+  </div>
+</header>
+<main><div class="wrap" id="screen"></div></main>
+<footer class="actions"><div class="wrap" id="actions"></div></footer>
+
+<script>
+const EMERGENCY = [
+  "숨쉬기가 힘들거나 가슴이 아프고 조여요",
+  "쓰러질 것 같거나, 정신을 잃었거나 경련이 있었어요",
+  "피가 멈추지 않거나 뼈가 부러진 것 같아요",
+  "얼굴·입술이 붓거나 온몸에 두드러기가 났어요",
+  "이상한 것을 삼켰거나 약을 많이 먹었어요",
+  "화상을 입었거나 눈·피부에 화학물질이 닿았어요",
+  "나 자신을 해치고 싶은 생각이 들어요",
+  "누가 나를 때렸거나 위협했어요"
+];
+
+// Symptoms shown for each body part; COMMON ones always appear.
+const SYMPTOMS_BY_PART = {
+  "머리": ["두통", "어지러움", "멍·타박상", "상처(긁힘·베임)"],
+  "눈": ["눈이 아파요·가려워요", "눈이 충혈됐어요", "눈에 뭐가 들어갔어요", "상처(긁힘·베임)"],
+  "귀": ["귀가 아파요", "귀에서 소리가 나요"],
+  "코": ["콧물", "코막힘", "코피"],
+  "입·턱": ["이가 아파요", "입 안이 헐었어요", "입술이 다쳤어요", "이가 빠졌어요·부러졌어요", "턱이 아파요", "멍·타박상"],
+  "골반": ["골반이 아파요", "사타구니가 아파요", "멍·타박상"],
+  "목": ["목 아픔", "기침"],
+  "가슴": ["기침", "가슴이 답답해요"],
+  "배": ["복통", "메스꺼움", "구토", "설사"],
+  "팔": ["상처(긁힘·베임)", "멍·타박상", "접질림", "화상"],
+  "허벅지": ["상처(긁힘·베임)", "멍·타박상", "접질림", "화상"],
+  "종아리": ["상처(긁힘·베임)", "멍·타박상", "접질림", "화상"],
+  "피부": ["가려움", "발진", "벌레 물림", "상처(긁힘·베임)", "화상"],
+  "엉덩이": ["엉덩이가 아파요", "멍·타박상", "상처(긁힘·베임)"],
+  "손": ["상처(긁힘·베임)", "멍·타박상", "접질림", "화상", "손가락이 아파요"],
+  "발": ["상처(긁힘·베임)", "멍·타박상", "접질림", "물집", "발목이 아파요"],
+  "무릎": ["상처(긁힘·베임)", "멍·타박상", "접질림", "무릎이 아파요"],
+  "어깨": ["멍·타박상", "접질림", "어깨가 아파요"],
+  "허리·등": ["허리가 아파요", "멍·타박상"]
+};
+const COMMON = ["열이 나요", "추워요(오한)", "마음이 힘들어요·불안해요"];
+["팔", "손", "발", "무릎", "허벅지", "종아리", "어깨"].forEach(k => SYMPTOMS_BY_PART[k].push("부어올랐어요"));
+["허벅지", "종아리"].forEach(k => SYMPTOMS_BY_PART[k].push("근육통·쥐"));
+const baseOf = w => w.replace(/^(왼|오른)/, "");
+function syncSymptoms() { state.a.symptoms = [...new Set(Object.values(state.a.sp || {}).flat())]; }
+function symGroupsHtml() {
+  const a = state.a;
+  const groups = [...(a.where || []).map(w => [w, SYMPTOMS_BY_PART[baseOf(w)] || []]), ["몸 전체", COMMON]];
+  return groups.map(([part, list]) => `<div class="sym-group"><div class="sym-title">${esc(part)}</div><div class="opts">${list.map(x =>
+    `<button type="button" class="opt${isRisky("symptoms", x) ? " risky" : ""}" data-sym="${esc(part)}" data-val="${esc(x)}" aria-pressed="${((a.sp || {})[part] || []).includes(x)}">${esc(x)}</button>`).join("")}</div></div>`).join("");
+}
+function symptomOptions(a) {
+  const set = new Set();
+  (a.where || []).forEach(w => (SYMPTOMS_BY_PART[w.replace(/^(왼|오른)/, "")] || []).forEach(x => set.add(x)));
+  COMMON.forEach(x => set.add(x));
+  return [...set];
+}
+
+// What a student can safely do while waiting. Shown only for 초록 (일반).
+const SELF_CARE = {
+  "상처(긁힘·베임)": "상처는 만지지 말고, 흐르는 물로 살살 씻은 뒤 기다려요.",
+  "코피": "고개를 살짝 앞으로 숙이고 콧방울을 10분 동안 꾹 눌러요. 고개를 뒤로 젖히지 마세요.",
+  "멍·타박상": "다친 곳을 움직이지 말고 편하게 두세요. 선생님이 냉찜질을 해 줄 거예요.",
+  "접질림": "다친 곳에 힘을 주거나 걷지 말고 편하게 두세요. 선생님이 냉찜질을 해 줄 거예요.",
+  "두통": "의자에 편하게 앉아 눈을 감고 쉬어요.",
+  "어지러움": "넘어지지 않게 바로 앉아서 쉬어요. 갑자기 일어나지 마세요.",
+  "가려움": "긁지 말고 기다려요.",
+  "벌레 물림": "물린 곳을 긁지 말고 기다려요.",
+  "메스꺼움": "토할 것 같으면 바로 선생님께 말해요.",
+  "화상": "시원한 흐르는 물에 대고 있고, 물집은 터뜨리지 마세요."
+};
+
+// Points for the teacher to check. These are possibilities, not diagnoses, and are shown only on the teacher screen.
+function teacherChecks(a) {
+  const pre = [];
+  if (a.pain >= 8) pre.push(`통증 ${a.pain}점: 바로 확인 (물품 자율 지급 안 함)`);
+  if (a.adhesive === "예") pre.push("파스·밴드 접착제 알레르기: 파스 대신 아이스팩, 밴드 대신 거즈");
+  return pre.concat(teacherChecksBase(a));
+}
+function teacherChecksBase(a) {
+  const sy = new Set(a.symptoms || []), has = x => sy.has(x);
+  const cond = new Set(a.conditions || []);
+  const fever = has("열이 나요") || parseFloat(a.temp) >= 38;
+  const out = [];
+  if (fever && (has("목 아픔") || has("기침") || has("콧물")))
+    out.push("감기·독감·인후염 가능성 확인. 다른 학생과 떨어져 앉게 하기");
+  else if (fever) out.push("발열: 체온 다시 재기");
+  if ((has("구토") || has("설사")) && (has("복통") || has("메스꺼움")))
+    out.push("장염·식중독 가능성 확인. 같은 반에 비슷한 증상 학생이 있는지 보기");
+  if (has("복통") && a.pain >= 6) out.push("심한 복통: 통증 위치(오른쪽 아랫배 등)와 누르면 아픈지 확인");
+  if (a.cause === "다쳤어요" && (a.where || []).includes("머리")) out.push("머리 외상: 구토·졸림·기억 이상이 있는지 지켜보기");
+  if ((has("접질림") || has("멍·타박상")) && a.pain >= 6) out.push("통증이 커서 골절 여부 확인 필요");
+  if ((has("두통") || has("어지러움")) && a.meal === "안 먹었어요") out.push("식사를 안 해서 생긴 두통·어지러움인지 확인");
+  if (cond.has("천식") && (has("기침") || has("가슴이 답답해요"))) out.push("천식 학생: 숨소리와 흡입기 확인");
+  if (cond.has("당뇨")) out.push("당뇨 학생: 혈당 확인");
+  if (cond.has("뇌전증")) out.push("뇌전증 학생: 발작 전 느낌이 있었는지 확인");
+  if (cond.has("심장질환") && (has("어지러움") || has("가슴이 답답해요"))) out.push("심장질환 학생: 맥박과 가슴 증상 확인");
+  if ((has("발진") || has("가려움")) && a.allergy === "있어요") out.push("알레르기 학생의 발진: 입술 붓기·숨쉬기 변화 지켜보기");
+  if (a.meds === "먹었어요" && (a.wish || []).includes("약이 필요해요")) out.push("오늘 이미 약을 먹음: 중복 투약 주의");
+  if (has("마음이 힘들어요·불안해요")) out.push("정서 지원 필요: 상담 연계 고려");
+  if (a.bellyWhere === "오른쪽 아랫배") out.push("오른쪽 아랫배 통증: 충수염 가능성 확인, 병원 안내 고려");
+  if (a.moveAbility === "못 움직여요") out.push("다친 곳을 못 움직임: 골절 가능성, 고정 후 병원 안내 고려");
+  if (a.walk === "못 디뎌요") out.push("다리를 못 디딤: 골절 가능성, 고정 후 병원 안내 고려");
+  if (a.eyeSight === "예") out.push("시야 흐림·겹쳐 보임: 시력 확인, 안과 진료 안내 고려");
+  if (a.headSign === "예") out.push("머리 외상 뒤 구토·졸림·기억 이상: 바로 확인");
+  return out;
+}
+
+// Recommended care, from fixed rules (not a diagnosis). kind: supply = student may take it after approval, drug = teacher hands it over, rest = bed.
+function recommendCare(a) {
+  if (triage() === "red") return [];
+  const sy = new Set(a.symptoms || []), has = x => sy.has(x);
+  const noTape = a.adhesive === "예" || a.adhesive === "잘 모르겠어요";
+  const fever = has("열이 나요") || parseFloat(a.temp) >= 37.5;
+  const tookMeds = a.meds === "먹었어요";
+  const out = [];
+  const add = (item, kind) => { if (!out.some(x => x.item === item)) out.push({ item, kind }); };
+  if (has("상처(긁힘·베임)") || has("입술이 다쳤어요")) add(noTape ? "소독약·거즈" : "소독약·밴드", "supply");
+  if (["멍·타박상", "접질림", "부어올랐어요", "발목이 아파요", "무릎이 아파요"].some(has)) add("아이스팩", "supply");
+  if (["근육통·쥐", "어깨가 아파요", "허리가 아파요"].some(has)) add(noTape ? "아이스팩" : "파스", "supply");
+  if (has("코피")) add("솜·휴지", "supply");
+  if (has("물집")) add("거즈", "supply");
+  if (["기침", "콧물", "목 아픔", "코막힘"].some(has) || fever) add("마스크", "supply");
+  if (!tookMeds) {
+    if (fever) add("해열제", "drug");
+    else if (has("두통") || has("이가 아파요") || has("귀가 아파요")) add("진통제", "drug");
+    if (has("복통") || has("설사")) add("소화제·정장제", "drug");
+    if (["가려움", "발진", "벌레 물림"].some(has)) add("가려움 연고", "drug");
+  }
+  if (has("메스꺼움") || has("구토") || has("어지러움") || (a.wish || []).includes("쉬고 싶어요")) add("침대 휴식", "rest");
+  return out;
+}
+const KIND_LABEL = { supply: "물품", drug: "약", rest: "휴식" };
+
+// Each step is one screen. Questions with required:false can be skipped.
+const STEPS = [
+  // Emergency signs, split by kind. `red` lists indexes into EMERGENCY.
+  { id: "info", title: "먼저 학번을 알려 주세요", lead: "학번을 적어야 시작할 수 있어요.", qs: [
+    { key: "visit", label: "오늘 보건실에 온 게", type: "single", options: ["오늘 처음이에요", "같은 증상으로 최근에 왔어요"] }
+  ]},
+  // All emergency signs on one page: tap the ones that apply, or "없어요".
+  { id: "red", red: [0, 1, 2, 3, 4, 5, 6, 7], safety: [6, 7], title: "이머전시", titleClass: "danger-title",
+    lead: "지금 이런 일이 있나요? 해당하는 것을 모두 눌러 주세요. 하나도 없으면 맨 아래 ‘없어요’를 눌러 주세요." },
+  { id: "where", title: "어디가 불편한가요?", lead: "사람 모형에서 눌러 주세요. 고른 곳에 따라 뒤의 질문이 달라져요.", qs: [
+    { key: "where", label: "불편한 곳", hint: "여러 개 골라도 돼요", type: "body", options: Object.keys(SYMPTOMS_BY_PART) },
+    // Replaces the old 다쳤어요/저절로 question: a.cause is worked out from this answer (see causeOf).
+    { key: "injury", label: "어디서, 어떻게 아프게 됐나요?", hint: "여러 개 골라도 돼요. 직접 적어도 돼요", type: "text",
+      chips: ["저절로 아파졌어요", "체육시간에", "쉬는 시간에", "넘어졌어요", "친구와 부딪혔어요", "물건에 부딪혔어요"] }
+  ]},
+  { id: "symptoms", title: "어떤 증상이 있나요?", lead: "고른 곳마다 증상을 하나 이상 눌러야 넘어갈 수 있어요. ‘몸 전체’는 안 골라도 돼요.", qs: [
+    { key: "symptoms", label: "부위별 증상", hint: "여러 개 골라도 돼요", type: "symgroups" }
+  ]},
+  { id: "pain", title: "얼마나, 언제부터 아픈가요?", qs: [
+    { key: "pain", label: "아픈 정도", type: "scale" },
+    { key: "temp", label: "체온", hint: "보건실 체온계로 재고 적어 주세요", type: "temp",
+      showIf: a => a.cause !== "다쳤어요" || (a.symptoms || []).some(x => x === "열이 나요" || x === "추워요(오한)") },
+    { key: "since", label: "언제부터?", type: "single", options: ["방금 전 체육시간", "방금", "오늘 아침부터", "어제부터", "며칠 됐어요"] },
+    { key: "headSign", label: "부딪힌 뒤 토했거나 졸리거나 기억이 흐릿한가요?", type: "single", options: ["아니요", "예"],
+      showIf: a => a.cause === "다쳤어요" && (a.where || []).some(w => ["머리", "눈", "귀", "코", "입·턱"].includes(baseOf(w))) },
+    { key: "bellyWhere", label: "배의 어디가 가장 아픈가요?", type: "single", options: ["배꼽 주변", "오른쪽 아랫배", "왼쪽 아랫배", "윗배(명치)", "잘 모르겠어요"],
+      showIf: a => (a.where || []).includes("배") },
+    { key: "eyeSight", label: "잘 안 보이거나 두 개로 겹쳐 보이나요?", type: "single", options: ["아니요", "예"],
+      showIf: a => (a.where || []).some(w => baseOf(w) === "눈") },
+    // Legs and pelvis get the walking question instead, so the two don't overlap.
+    { key: "moveAbility", label: "다친 곳을 움직일 수 있나요?", type: "single", options: ["잘 움직여요", "아파서 조금만 움직여요", "못 움직여요"],
+      showIf: a => a.cause === "다쳤어요" && (a.where || []).some(w => ["팔", "손", "어깨"].includes(baseOf(w))) },
+    { key: "walk", label: "아픈 다리로 디디고 걸을 수 있나요?", type: "single", options: ["잘 걸어요", "절뚝거리며 걸어요", "못 디뎌요"],
+      showIf: a => (a.where || []).some(w => ["골반", "허벅지", "종아리", "무릎", "발"].includes(baseOf(w))) }
+  ]},
+  { id: "health", optional: true, title: "건강 상태와 바라는 것", lead: "모두 답하지 않아도 넘어갈 수 있어요.", qs: [
+    // A 학번 the teacher pre-registered already has its conditions and allergies on file, so skip asking.
+    { key: "conditions", label: "앓고 있는 병", hint: "여러 개 골라도 돼요", type: "multi", exclusive: "없어요",
+      options: ["없어요", "천식", "당뇨", "뇌전증", "심장질환", "기타"], required: false, showIf: a => !a.registered },
+    { key: "conditionNote", label: "어떤 병인가요?", hint: "병 이름을 몰라도 아는 만큼 적어 주세요", type: "text", required: false,
+      showIf: a => !a.registered && (a.conditions || []).includes("기타") },
+    { key: "allergy", label: "알레르기가 있나요?", type: "single", options: ["없어요", "있어요", "잘 모르겠어요"], required: false, showIf: a => !a.registered },
+    { key: "adhesive", label: "파스나 밴드를 붙인 곳이 빨개지거나 가려웠던 적이 있나요?", type: "single", options: ["아니요", "예", "잘 모르겠어요"], required: false,
+      showIf: a => (a.symptoms || []).some(x => ["상처(긁힘·베임)", "멍·타박상", "접질림", "부어올랐어요", "근육통·쥐", "어깨가 아파요", "허리가 아파요", "무릎이 아파요", "발목이 아파요"].includes(x)) },
+    { key: "allergyNote", label: "무엇에 알레르기가 있나요?", hint: "약, 음식, 벌 등", type: "text", required: false,
+      showIf: a => !a.registered && a.allergy === "있어요" },
+    { key: "meds", label: "오늘 약을 먹었나요?", type: "single", options: ["안 먹었어요", "먹었어요"], required: false },
+    { key: "medsNote", label: "무슨 약을, 언제 먹었나요?", type: "text", required: false, showIf: a => a.meds === "먹었어요" },
+    { key: "meal", label: "오늘 밥을 먹었나요?", type: "single", options: ["먹었어요", "안 먹었어요"], required: false },
+    { key: "wish", label: "보건 선생님께 무엇이 필요한가요?", hint: "여러 개 골라도 돼요", type: "multi", required: false,
+      options: ["쉬고 싶어요", "약이 필요해요", "집에 가고 싶어요", "상담하고 싶어요"] },
+    { key: "guardian", label: "보호자 연락이 필요한가요?", type: "single", required: false,
+      options: ["필요해요", "괜찮아요"] }
+  ]},
+  { id: "review", title: "답변을 확인해 주세요", lead: "맞으면 ‘제출’을 눌러 주세요." }
+];
+
+let state;
+let dbPromise = null;
+const getDb = () => (dbPromise ??= (window.claude?.use ? window.claude.use("db") : Promise.resolve(null)).catch(() => null));
+
+async function saveVisit() {
+  const a = state.a;
+  const doc = {
+    sid: (a.sid || "").trim(), at: new Date().toISOString(), grade: triage(),
+    emergency: hasEmergency(), symptoms: hasEmergency() ? EMERGENCY.filter((_, i) => a.red[i]) : (a.symptoms || []),
+    pain: a.pain ?? null, temp: a.temp ?? null,
+    checks: hasEmergency() ? [] : teacherChecks(a),
+    rows: summaryRows(), status: "waiting", visit: a.visit || ""
+  };
+  const care = hasEmergency() ? [] : recommendCare(a);
+  if (care.length) doc.plan = { items: care, status: "pending" };
+  try {
+    const db = await getDb();
+    if (!db) throw new Error("no db");
+    const ref = await db.collection("visits").add(doc);
+    state.saved = "ok";
+    if (doc.plan) {
+      state.plan = doc.plan;
+      // Wait on this tablet for the teacher's answer.
+      state.planUnsub = db.collection("visits").doc(ref.id).onSnapshot(snap => {
+        const p = snap.data()?.plan;
+        if (!p || state.screen !== "done" || isTeacherView()) return;
+        const was = state.plan?.status;
+        state.plan = p;
+        if (was === "pending" && p.status !== "pending") {
+          clearTimeout(state.timer);
+          state.timer = setTimeout(() => { if (state.screen === "done" && !isTeacherView()) reset(); }, 30000);
+        }
+        render();
+      }, () => {});
+    } else {
+      state.timer = setTimeout(() => { if (state.screen === "done" && !isTeacherView()) reset(); }, 30000);
+    }
+  } catch (e) { state.saved = "fail"; }
+  if (state.screen === "done") render();
+}
+
+// True when the teacher pre-registered this 학번. Only existence is checked; the student never sees the profile.
+async function isRegistered(sid) {
+  const id = (sid || "").trim();
+  if (!id) return false;
+  try {
+    const db = await getDb();
+    if (!db) return false;
+    const snap = await Promise.race([db.collection("profiles").doc(id).get(), new Promise((_, no) => setTimeout(no, 3000))]);
+    return !!snap.exists;
+  } catch (e) { return false; }
+}
+
+function reset() {
+  clearTimeout(state?.timer);
+  state?.planUnsub?.();
+  state = { screen: "start", step: 0, a: { red: EMERGENCY.map(() => null), sid: "" } };
+  render();
+}
+
+const NO_TEMP = "잴 수 없어요";
+const tempOk = v => v !== "" && v != null && +v >= 35 && +v <= 43;
+// Shown once two characters are in, so a half-typed "3" doesn't trigger it.
+const tempErrHidden = v => !v || v === NO_TEMP || String(v).length < 2 || tempOk(v);
+// injury = picked chips + typed note. 저절로 can't be combined with the ways of getting hurt.
+const SPONTANEOUS = "저절로 아파졌어요";
+function syncInjury() {
+  const a = state.a;
+  a.injury = [...(a.injuryChips || []), (a.injuryNote || "").trim()].filter(Boolean).join(", ") || undefined;
+  a.cause = causeOf(a.injury);
+}
+const causeOf = v => { const t = (v || "").trim(); return !t ? undefined : t.includes("저절로") ? "저절로 아파졌어요" : "다쳤어요"; };
+// 학번 is five digits: grade (1) + class (2) + number (2), e.g. 20310.
+const validSid = v => /^[1-6](0[1-9]|[1-9]\d)(0[1-9]|[1-9]\d)$/.test((v || "").trim());
+const sidErrHtml = v => `<p class="missing" id="sid-err" ${!(v || "").trim() || validSid(v) ? "hidden" : ""} style="margin:0">학번은 20310처럼 숫자 5자리로 적어 주세요. (학년 1자리 + 반 2자리 + 번호 2자리)</p>`;
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const visibleQs = step => (step.qs || []).filter(q => !q.showIf || q.showIf(state.a));
+const answered = q => {
+  const v = state.a[q.key];
+  // Every part picked on the body map needs at least one symptom; 몸 전체 can be left empty.
+  if (q.type === "symgroups") return (state.a.where || []).every(w => !(SYMPTOMS_BY_PART[baseOf(w)] || []).length || ((state.a.sp || {})[w] || []).length > 0);
+  if (q.type === "multi" || q.type === "body") return Array.isArray(v) && v.length > 0;
+  if (q.type === "text") return !!(v && v.trim());
+  if (q.type === "temp") return v === NO_TEMP || tempOk(v);
+  return v !== undefined && v !== null && v !== "";
+};
+
+function stepComplete(step) {
+  const a = state.a;
+  if (step.red) return step.red.every(i => a.red[i] !== null);
+  if (step.id === "info" && !validSid(a.sid)) return false;
+  if (step.id === "review") return STEPS.slice(0, -1).every(stepComplete);
+  return visibleQs(step).every(q => q.required === false || answered(q));
+}
+const hasEmergency = () => state.a.red.some(v => v === true);
+
+function triage() {
+  const a = state.a;
+  if (hasEmergency() || a.pain >= 8 || parseFloat(a.temp) >= 39 || a.headSign === "예") return "red";
+  const chronic = (a.conditions || []).some(c => ["천식", "당뇨", "뇌전증", "심장질환"].includes(c));
+  if (a.pain >= 5 || a.moveAbility === "못 움직여요" || a.walk === "못 디뎌요" || a.eyeSight === "예" || a.bellyWhere === "오른쪽 아랫배" || (a.symptoms || []).includes("구토") ||
+      (a.symptoms || []).includes("열이 나요") || parseFloat(a.temp) >= 38 ||
+      (a.cause === "다쳤어요" && (a.where || []).includes("머리")) || chronic) return "yellow";
+  return "green";
+}
+const GRADE = { red: ["빨강 · 즉시", "red"], yellow: ["노랑 · 우선", "yellow"], green: ["초록 · 일반", "green"] };
+
+/* ---------- rendering ---------- */
+// Answers that push the visit to red or yellow show red when picked, like the emergency list.
+const RISKY = { headSign: ["예"], moveAbility: ["못 움직여요"], walk: ["못 디뎌요"], eyeSight: ["예"], symptoms: ["구토"] };
+const isRisky = (key, value) => (key === "pain" && value >= 8) || (RISKY[key] || []).includes(value);
+function optBtn(key, value, selected, extra = "") {
+  if (isRisky(key, value)) extra += " risky";
+  else if (key === "pain" && value >= 5) extra += " caution";
+  return `<button type="button" class="opt ${extra}" data-key="${key}" data-val="${esc(value)}" aria-pressed="${selected}">${esc(value)}</button>`;
+}
+
+// Tappable figure for choosing where it hurts. 피부 and 기타 have no single place, so they stay as buttons.
+let bodySide = "front";
+function bodyMapHtml(key, sel) {
+  const part = (name, shapes, labels = [], hits = "") => `<g class="body-part" role="button" tabindex="0" data-key="${key}" data-val="${name}" aria-label="${name}" aria-pressed="${sel.includes(name)}">${hits}${shapes}${labels.map(([t, x, y]) => `<text x="${x}" y="${y}">${t}</text>`).join("")}</g>`;
+  const hit = (x, y, w, h) => `<rect class="hit" x="${x}" y="${y}" width="${w}" height="${h}"/>`;
+  // Left/right pairs are separate parts, named for the figure's own sides.
+  // From the front it faces us, so its left is on the right of the screen.
+  const back = bodySide === "back";
+  const [sL, sR] = back ? ["왼", "오른"] : ["오른", "왼"];
+  const lr = (name, L, R) => part(sL + name, ...L) + part(sR + name, ...R);
+  const torso = back
+    ? part("허리·등", `<path class="shape" d="M70,128 Q72,120 84,120 L156,120 Q168,120 170,128 L166,192 L164,222 L76,222 L74,192 Z"/>`, [["허리·등", 120, 178]])
+      + part("엉덩이", `<path class="shape" d="M76,224 L164,224 L162,252 Q160,262 148,262 L92,262 Q80,262 78,252 Z"/><path class="seam" d="M120,236 L120,262"/>`, [["엉덩이", 120, 248]])
+    : part("배", `<path class="shape" d="M74,194 L166,194 L164,228 L76,228 Z"/>`, [["배", 120, 216]])
+      + part("골반", `<path class="shape" d="M76,230 L164,230 L162,252 Q160,260 150,260 L90,260 Q80,260 78,252 Z"/>`, [["골반", 120, 250]])
+      + part("가슴", `<path class="shape" d="M70,128 Q72,120 84,120 L156,120 Q168,120 170,128 L166,192 L74,192 Z"/>`, [["가슴", 120, 162]]);
+  const face = back ? "" : lr("눈", [`<ellipse class="shape" cx="98" cy="60" rx="12" ry="8"/>`, [["눈", 98, 64]], hit(78, 42, 40, 32)], [`<ellipse class="shape" cx="142" cy="60" rx="12" ry="8"/>`, [["눈", 142, 64]], hit(122, 42, 40, 32)])
+    + part("코", `<path class="shape" d="M120,66 Q109,84 109,87 Q120,92 131,87 Q131,84 120,66 Z"/>`, [["코", 120, 86]], hit(98, 74, 44, 22))
+    + part("입·턱", `<path class="shape" d="M102,98 Q120,112 138,98 Q120,104 102,98 Z"/>`, [["입·턱", 120, 119]], hit(90, 92, 60, 30));
+  return `<div class="body-wrap">
+    <button type="button" class="opt" data-act="flip">${back ? "앞쪽 보기" : "뒤쪽 보기 (등·허리·엉덩이)"}</button>
+    <svg class="body-map" viewBox="0 0 240 462" aria-label="몸 그림에서 불편한 곳을 눌러 주세요">
+      <g transform="translate(0,22)">
+      ${lr("팔", [`<rect class="shape" x="44" y="124" width="24" height="118" rx="12" transform="rotate(10 56 124)"/>`, [["팔", 47, 190]]], [`<rect class="shape" x="172" y="124" width="24" height="118" rx="12" transform="rotate(-10 184 124)"/>`, [["팔", 193, 190]]])}
+      ${lr("허벅지", [`<rect class="shape" x="80" y="262" width="36" height="68" rx="16"/>`, [["허벅지", 98, 300]]], [`<rect class="shape" x="124" y="262" width="36" height="68" rx="16"/>`, [["허벅지", 142, 300]]])}
+      ${lr("종아리", [`<rect class="shape" x="80" y="350" width="36" height="62" rx="14"/>`, [["종아리", 98, 384]]], [`<rect class="shape" x="124" y="350" width="36" height="62" rx="14"/>`, [["종아리", 142, 384]]])}
+      ${torso}
+      ${part("목", `<rect class="shape" x="106" y="98" width="28" height="24" rx="6"/>`, [["목", 120, 115]])}
+      ${lr("어깨", [`<ellipse class="shape" cx="64" cy="132" rx="17" ry="13"/>`, [["어깨", 64, 136]]], [`<ellipse class="shape" cx="176" cy="132" rx="17" ry="13"/>`, [["어깨", 176, 136]]])}
+      ${lr("손", [`<circle class="shape" cx="36" cy="248" r="13"/>`, [["손", 36, 252]], hit(18, 230, 36, 38)], [`<circle class="shape" cx="204" cy="248" r="13"/>`, [["손", 204, 252]], hit(186, 230, 36, 38)])}
+      ${lr("무릎", [`<ellipse class="shape" cx="98" cy="340" rx="17" ry="11"/>`, [["무릎", 98, 344]]], [`<ellipse class="shape" cx="142" cy="340" rx="17" ry="11"/>`, [["무릎", 142, 344]]])}
+      ${lr("발", [`<ellipse class="shape" cx="94" cy="418" rx="22" ry="10"/>`, [["발", 94, 422]], hit(70, 406, 48, 28)], [`<ellipse class="shape" cx="146" cy="418" rx="22" ry="10"/>`, [["발", 146, 422]], hit(122, 406, 48, 28)])}
+      </g>
+      ${part("머리", `<circle class="shape" cx="120" cy="66" r="56"/>`, [["머리", 120, back ? 70 : 30]])}
+      ${lr("귀", [`<ellipse class="shape" cx="58" cy="70" rx="11" ry="17"/>`, [["귀", 58, 75]], hit(40, 48, 30, 46)], [`<ellipse class="shape" cx="182" cy="70" rx="11" ry="17"/>`, [["귀", 182, 75]], hit(170, 48, 30, 46)])}
+      ${face}
+      <text class="side-label" x="16" y="16">${sL}쪽</text><text class="side-label" x="224" y="16">${sR}쪽</text>
+      <text class="side-label" x="16" y="456">${sL}쪽</text><text class="side-label" x="224" y="456">${sR}쪽</text>
+    </svg>
+    <div class="opts body-extra">${["피부"].map(o => optBtn(key, o, sel.includes(o))).join("")}</div>
+    <p class="body-picked">${sel.length ? "고른 곳: " + sel.map(esc).join(", ") : "그림을 눌러 아픈 곳을 골라 주세요. 그림에 적힌 왼쪽·오른쪽이 내 몸의 왼쪽·오른쪽이에요. 다시 누르면 취소돼요."}</p>
+  </div>`;
+}
+
+function renderQ(q) {
+  const v = state.a[q.key];
+  const hint = q.hint ? `<small>${esc(q.hint)}</small>` : "";
+  let body = "";
+  if (q.type === "single") body = `<div class="opts">${q.options.map(o => optBtn(q.key, o, v === o)).join("")}</div>`;
+  if (q.type === "body") body = bodyMapHtml(q.key, v || []);
+  if (q.type === "multi") body = `<div class="opts">${(typeof q.options === "function" ? q.options(state.a) : q.options).map(o => optBtn(q.key, o, (v || []).includes(o))).join("")}</div>`;
+  if (q.type === "symgroups") body = symGroupsHtml();
+  if (q.type === "text" && q.chips) body = `<div class="opts">${q.chips.map(c => `<button type="button" class="opt" data-chip="${q.key}" data-val="${esc(c)}" aria-pressed="${(state.a[q.key + "Chips"] || []).includes(c)}">${esc(c)}</button>`).join("")}</div>
+    <input type="text" id="f-${q.key}" data-text="${q.key}Note" value="${esc(state.a[q.key + "Note"] || "")}" autocomplete="off" placeholder="더 적을 말 (예: 운동장에서 축구하다가)">`;
+  else if (q.type === "text") body = `<input type="text" id="f-${q.key}" data-text="${q.key}" value="${esc(v || "")}" autocomplete="off">`;
+  if (q.type === "temp") body = `<div class="opts" style="align-items:center">
+      <input type="number" inputmode="decimal" step="0.1" min="35" max="43" id="f-temp" data-text="temp" placeholder="36.5"
+        value="${v && v !== NO_TEMP ? esc(v) : ""}" style="width:8em"> <span>℃</span>
+      ${optBtn(q.key, NO_TEMP, v === NO_TEMP)}</div>
+    <p class="missing" id="temp-err" ${tempErrHidden(v) ? "hidden" : ""} style="margin:0">삼가 고인의 명복을 빕니다.</p>`;
+  if (q.type === "scale") body = `
+    <div class="scale">${[...Array(10).keys()].map(i => optBtn(q.key, i + 1, v === i + 1)).join("")}</div>
+    <div class="scale-ends"><span>1 조금 아파요</span><span>5 꽤 아파요</span><span>10 참을 수 없어요</span></div>`;
+  return `<section class="q"><div class="label">${esc(q.label)}${hint}</div>${body}</section>`;
+}
+
+/* ---------- teacher queue (#teacher) ---------- */
+const teacher = { customFor: "", customText: "", profiles: {}, pf: {}, pfDel: "", pfMsg: "", docs: null, error: "", unsub: null, showDone: false, tab: "queue", q: "", sel: "", picked: new Set(), pickedSids: new Set(), confirm: false, deleting: false };
+// A device opened once as the teacher screen stays a teacher screen, even if the link later opens without #teacher.
+const MODE_KEY = "selfcheck-device-mode";
+const deviceMode = () => { try { return localStorage.getItem(MODE_KEY); } catch (e) { return null; } };
+const setDeviceMode = m => { try { m ? localStorage.setItem(MODE_KEY, m) : localStorage.removeItem(MODE_KEY); } catch (e) {} };
+const isTeacherView = () => location.hash === "#teacher" || deviceMode() === "teacher";
+const RANK = { red: 0, yellow: 1, green: 2 };
+const hhmm = iso => new Date(iso).toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit", hour12: false });
+
+async function startTeacher() {
+  if (teacher.unsub) return;
+  const db = await getDb();
+  if (!db) { teacher.error = "기록을 불러올 수 없어요. claude.ai에 로그인한 상태에서 이 페이지를 열어 주세요."; return renderTeacher(); }
+  const unsubP = db.collection("profiles").onSnapshot(
+    snap => { teacher.profiles = {}; snap.docs.forEach(d => { teacher.profiles[d.id] = d.data(); }); renderTeacher(); }, () => {});
+  const unsubV = db.collection("visits").orderBy("at", "desc").limit(1000).onSnapshot(
+    snap => { teacher.docs = snap.docs.map(d => ({ id: d.id, ...d.data() })); teacher.error = ""; renderTeacher(); },
+    e => { teacher.error = e.code === "not_granted" ? "이 기록은 보건 선생님(편집 권한이 있는 계정)만 볼 수 있어요." : "기록을 불러오지 못했어요. 잠시 후 새로고침해 주세요."; renderTeacher(); }
+  );
+  teacher.unsub = () => { unsubV(); unsubP(); };
+}
+
+const effGrade = d => d.override || d.grade;
+const sidOf = d => (d.sid || "").trim();
+const REVISIT = "같은 증상으로 최근에 왔어요";
+const visitOf = d => d.visit || ((d.rows || []).find(r => r[0] === "방문") || [])[1] || "";
+// For a student who says they came recently with the same problem: their last few visits, newest first.
+function recentHtml(d) {
+  const prev = (teacher.docs || []).filter(x => x.id !== d.id && sidOf(x) && sidOf(x) === sidOf(d) && x.at < d.at)
+    .sort((x, y) => y.at.localeCompare(x.at)).slice(0, 3);
+  return `<div class="recent"><div class="checks-title" style="color:var(--accent)">같은 증상으로 다시 왔어요 · 최근 방문 기록</div>
+    ${prev.length ? `<ul>${prev.map(x => `<li><b>${dayLabel(x.at)} ${hhmm(x.at)}</b> ${GRADE[effGrade(x)][0].split(" ")[0]} · ${esc([(x.symptoms || []).join(", "), x.pain != null ? `통증 ${x.pain}/10` : ""].filter(Boolean).join(" · "))}${x.plan && x.plan.status && x.plan.status !== "pending" ? ` · 처치: ${esc((x.plan.items || []).map(i => i.item).join(", "))}${x.plan.note ? ` (${esc(x.plan.note)})` : ""}` : ""}</li>`).join("")}</ul>`
+      : `<p class="note" style="margin:0">이 학번의 이전 방문 기록이 없어요.</p>`}</div>`;
+}
+const dayLabel = iso => new Date(iso).toLocaleDateString("ko-KR", { month: "long", day: "numeric", weekday: "short" });
+
+const profLine = p => [p.allergy && "알레르기: " + p.allergy, p.cond && "주의: " + p.cond, p.tel && "보호자 " + p.tel, p.memo].filter(Boolean).join(" · ");
+function profBanner(d) {
+  const p = teacher.profiles[sidOf(d)], line = p ? profLine(p) : "";
+  return line ? `<p class="note" style="border-left-color:var(--red);color:var(--ink)"><b>사전 등록</b> ${esc(line)}</p>` : "";
+}
+const PLAN_STATUS = { approved: "승인함", see: "직접 보기로 함", custom: "다른 처치 안내함" };
+function planTeacherHtml(d, history) {
+  const p = d.plan;
+  if (!p) return "";
+  const chips = p.items.map(x => `<span class="care-chip ${x.kind}">${KIND_LABEL[x.kind]} · ${esc(x.item)}</span>`).join("");
+  let ctl;
+  if (p.status !== "pending") ctl = `<p class="note" style="margin:0">${PLAN_STATUS[p.status]}${p.note ? `: ${esc(p.note)}` : ""}</p>`;
+  else if (history) ctl = `<p class="note" style="margin:0">승인 대기 중</p>`;
+  else if (teacher.customFor === d.id) ctl = `<div class="card-actions"><input type="text" id="custom-${d.id}" data-custom="1" value="${esc(teacher.customText)}" placeholder="학생 화면에 보일 안내" style="flex:1;min-width:0">
+      <button type="button" class="opt" data-visit="${d.id}" data-do="plan-custom">보내기</button>
+      <button type="button" class="opt" data-plan-cancel="1">취소</button></div>`;
+  else ctl = `<div class="card-actions">
+      <button type="button" class="opt approve" data-visit="${d.id}" data-do="plan-ok">승인</button>
+      <button type="button" class="opt" data-visit="${d.id}" data-do="plan-see">직접 볼게요</button>
+      <button type="button" class="opt" data-plan-custom="${d.id}">다른 처치</button></div>`;
+  return `<div class="plan-box ${p.status}"><div class="checks-title" style="color:var(--accent)">추천 처치${p.status === "pending" ? " · 승인 대기" : ""}</div>
+    <div class="care-chips">${chips}</div>${ctl}</div>`;
+}
+function visitCard(d, { history = false, priorCount = 0 } = {}) {
+  const g = effGrade(d);
+  const mins = Math.max(0, Math.round((Date.now() - new Date(d.at)) / 60000));
+  const main = [d.emergency ? "위험 신호: " + d.symptoms.join(", ") : (d.symptoms || []).join(", "),
+    d.pain != null ? `통증 ${d.pain}/10` : "", d.temp && d.temp !== NO_TEMP ? `${d.temp}℃` : ""].filter(Boolean).join(" · ");
+  const when = history ? `${dayLabel(d.at)} ${hhmm(d.at)}`
+    : `${hhmm(d.at)} 접수${d.status === "done" ? "" : ` · ${mins}분 대기`}`;
+  const actions = history ? "" : `<div class="card-actions">
+      ${priorCount ? `<button type="button" class="opt" data-hist="${esc(sidOf(d))}" data-from-queue="1">이전 방문 ${priorCount}회 보기</button>` : ""}
+      ${d.status === "done"
+        ? `<button type="button" class="opt" data-visit="${d.id}" data-do="reopen">대기로 되돌리기</button>`
+        : `<button type="button" class="opt" data-visit="${d.id}" data-do="done" aria-pressed="false">처리 완료</button>
+           <span class="teacher-link">등급 바꾸기</span>
+           ${["red", "yellow", "green"].map(x => `<button type="button" class="opt" data-visit="${d.id}" data-do="grade" data-grade="${x}" aria-pressed="${g === x}">${GRADE[x][0].split(" ")[0]}</button>`).join("")}`}
+    </div>`;
+  return `<article class="card ${g} ${d.status === "done" && !history ? "done" : ""}">
+    <div class="card-top">${history ? `<label class="pick"><input type="checkbox" data-pick="${d.id}" ${teacher.picked.has(d.id) ? "checked" : ""}><span class="sr">선택</span></label>` : ""}<span class="chip ${g}">${GRADE[g][0]}</span><b>${esc(sidOf(d) || "학번 없음")}</b>
+      <span class="time">${when}</span></div>
+    ${profBanner(d)}
+    <p class="main">${esc(main)}</p>
+    ${!history && visitOf(d) === REVISIT ? recentHtml(d) : ""}
+    <div class="checks-title">예상 질환 · 확인할 점</div>
+    ${(d.checks || []).length ? `<ul class="checks">${d.checks.map(c => `<li>${esc(c)}</li>`).join("")}</ul>` : `<p class="note" style="margin:0">${d.emergency ? "위험 신호로 바로 호출된 학생이에요." : "답변에서 특별히 짚이는 질환은 없어요."}</p>`}
+    ${planTeacherHtml(d, history)}
+    <details><summary>전체 답변 보기</summary>${rowsHtml(d.rows || [])}</details>
+    ${actions}</article>`;
+}
+
+function renderTeacher() {
+  if (!isTeacherView() || !teacherUnlocked()) return;
+  document.querySelector(".brand b").textContent = "보건실 선생님 화면";
+  document.getElementById("stepLabel").textContent = "";
+  document.querySelector(".bar").hidden = true;
+  document.querySelector("footer.actions").hidden = true;
+  const screen = document.getElementById("screen");
+  const tabs = `<div class="tabs" role="tablist">
+      <button type="button" role="tab" class="tab" data-tab="queue" aria-selected="${teacher.tab === "queue"}">오늘 대기열</button>
+      <button type="button" role="tab" class="tab" data-tab="history" aria-selected="${teacher.tab === "history"}">학번별 방문 기록</button>
+      <button type="button" role="tab" class="tab" data-tab="profiles" aria-selected="${teacher.tab === "profiles"}">학생 등록</button>
+    </div>`;
+  const status = teacher.error ? `<div class="empty">${esc(teacher.error)}</div>`
+    : !teacher.docs ? `<div class="empty">기록을 불러오는 중이에요…</div>` : "";
+  const foot = `<p class="note">'예상 질환 · 확인할 점'은 답변을 바탕으로 한 참고 사항이며 진단이 아니에요. 학생 화면에는 보이지 않아요.</p>
+    <p class="teacher-link">이 기기는 선생님 화면으로 고정돼 있어요. <button type="button" class="sid-link" data-act="student-mode">학생용 태블릿으로 바꾸기</button></p>`;
+
+  if (teacher.tab === "profiles") {
+    const f = k => esc(teacher.pf[k] || "");
+    const fld = (k, label, ph = "") => `<div class="field"><label for="p-${k}">${label}</label><input type="text" id="p-${k}" data-pf="${k}" value="${f(k)}" placeholder="${ph}" autocomplete="off"></div>`;
+    const list = Object.entries(teacher.profiles).sort(([x], [y]) => x.localeCompare(y));
+    screen.innerHTML = `${tabs}<div><h1>학생 사전 등록</h1><p class="lead">알레르기·지병·보호자 연락처를 한 번 등록하면, 그 학번이 접수될 때 선생님 카드에 바로 떠요. 학생 화면에는 보이지 않아요.</p></div>
+      <section class="q">${fld("sid", "학번", "30207")}${fld("allergy", "알레르기·에피펜", "예: 땅콩, 에피펜 보유")}${fld("cond", "앓는 병·주의사항", "예: 천식, 흡입기 가방에 있음")}${fld("tel", "보호자 연락처")}${fld("memo", "메모")}
+        <button type="button" class="btn primary" data-act="prof-save">저장</button>${teacher.pfMsg ? `<p class="note">${esc(teacher.pfMsg)}</p>` : ""}</section>
+      ${teacher.error ? status : list.length ? `<div class="hist-list">${list.map(([id, p]) => `<div class="hist-item" style="padding-right:10px"><div style="flex:1;min-width:0;padding:10px 0"><b>${esc(id)}</b><br><span class="note" style="border:0;padding:0">${esc(profLine(p))}</span></div>
+        <button type="button" class="opt" data-act="prof-edit" data-sid="${esc(id)}">수정</button>
+        <button type="button" class="opt" data-act="prof-del" data-sid="${esc(id)}">${teacher.pfDel === id ? "한 번 더 눌러 삭제" : "삭제"}</button></div>`).join("")}</div>` : `<div class="empty">등록된 학생이 아직 없어요.</div>`}${foot}`;
+    return;
+  }
+
+  if (teacher.tab === "history") {
+    screen.innerHTML = `${tabs}<div><h1>학번별 방문 기록</h1><p class="lead">학번을 검색하거나 목록에서 골라 지금까지의 방문을 확인해요.</p></div>
+      <input type="text" inputmode="numeric" id="t-search" placeholder="학번 검색 (예: 30207)" value="${esc(teacher.q)}" autocomplete="off">
+      ${status || `<div id="histResults">${historyHtml()}</div>`}${foot}`;
+    return;
+  }
+
+  const today = new Date().toDateString();
+  const all = teacher.docs || [];
+  const docs = all.filter(d => new Date(d.at).toDateString() === today);
+  const prior = d => all.filter(x => sidOf(x) && sidOf(x) === sidOf(d) && x.at < d.at).length;
+  const waiting = docs.filter(d => d.status !== "done")
+    .sort((x, y) => RANK[effGrade(x)] - RANK[effGrade(y)] || x.at.localeCompare(y.at));
+  const done = docs.filter(d => d.status === "done");
+  const count = g => waiting.filter(d => effGrade(d) === g).length;
+  const card = d => visitCard(d, { priorCount: prior(d) });
+
+  let body = status;
+  if (!body && !docs.length) body = `<div class="empty">오늘 제출한 학생이 아직 없어요.<br>학생이 자가진단을 제출하면 여기에 바로 나타나요.</div>`;
+  else if (!body) body = `<div class="queue">${waiting.map(card).join("") || '<div class="empty">기다리는 학생이 없어요.</div>'}</div>
+    ${done.length ? `<details ${teacher.showDone ? "open" : ""} id="doneList"><summary class="teacher-link">처리 완료 ${done.length}명</summary>
+      <div class="queue" style="margin-top:12px">${done.map(card).join("")}</div></details>` : ""}`;
+
+  screen.innerHTML = `${tabs}<div class="t-head"><div><h1>오늘 대기 ${waiting.length}명</h1>
+      <p class="lead">위급한 학생이 위로 올라와요. 같은 등급은 먼저 온 순서예요.</p></div>
+      <div class="counts"><span class="chip red">빨강 ${count("red")}</span><span class="chip yellow">노랑 ${count("yellow")}</span><span class="chip green">초록 ${count("green")}</span></div></div>
+    ${body}${foot}`;
+}
+
+function historyHtml() {
+  const all = teacher.docs || [];
+  if (teacher.sel) {
+    const visits = all.filter(d => sidOf(d) === teacher.sel).sort((x, y) => y.at.localeCompare(x.at));
+    const m = teacher.sel.match(/^(\d)(\d{2})(\d{2})$/);
+    const who = m ? ` · ${+m[1]}학년 ${+m[2]}반 ${+m[3]}번` : "";
+    return `<div class="opts">${teacher.returnTo ? `<button type="button" class="opt" data-act="back-to-queue">← 대기열로 돌아가기</button>` : ""}<button type="button" class="opt" data-hist="">← 학번 목록</button></div>
+      <div class="hist-head"><b>${esc(teacher.sel)}</b><span>${who} · 방문 ${visits.length}회</span></div>
+      ${visits.length ? `<div id="delBar" class="del-bar">${delBarHtml(visits)}</div>` : ""}
+      <div class="queue">${visits.map(d => visitCard(d, { history: true })).join("") || '<div class="empty">이 학번의 방문 기록이 없어요.</div>'}</div>`;
+  }
+  const by = new Map();
+  all.forEach(d => { const k = sidOf(d); if (!k) return; if (!by.has(k)) by.set(k, []); by.get(k).push(d); });
+  const q = teacher.q.trim();
+  const rows = [...by.entries()].filter(([k]) => !q || k.includes(q))
+    .map(([k, v]) => ({ sid: k, n: v.length, last: v.reduce((a, b) => a.at > b.at ? a : b) }))
+    .sort((x, y) => y.n - x.n || y.last.at.localeCompare(x.last.at));
+  if (!by.size) return `<div class="empty">아직 저장된 방문 기록이 없어요.</div>`;
+  if (!rows.length) return `<div class="empty">‘${esc(q)}’에 해당하는 학번이 없어요.</div>`;
+  return `<p class="teacher-link">방문이 많은 학생부터 보여요.</p>
+    <div id="delBar" class="del-bar">${sidBarHtml(rows.map(r => r.sid))}</div>
+    <div class="hist-list">${rows.map(r => `<div class="hist-item">
+      <label class="pick"><input type="checkbox" data-pick-sid="${esc(r.sid)}" ${teacher.pickedSids.has(r.sid) ? "checked" : ""}><span class="sr">${esc(r.sid)} 선택</span></label>
+      <button type="button" class="hist-row" data-hist="${esc(r.sid)}">
+      <b>${esc(r.sid)}</b><span class="n">방문 ${r.n}회</span>
+      <span class="last">최근 ${dayLabel(r.last.at)}</span><span class="chip ${effGrade(r.last)}">${GRADE[effGrade(r.last)][0].split(" ")[0]}</span>
+    </button></div>`).join("")}</div>`;
+}
+
+function selectedVisits() {
+  return (teacher.docs || []).filter(d => sidOf(d) === teacher.sel);
+}
+function delBarHtml(visits = selectedVisits()) {
+  // Keep only picks that still exist on this student's list.
+  const ids = new Set(visits.map(d => d.id));
+  [...teacher.picked].forEach(id => { if (!ids.has(id)) teacher.picked.delete(id); });
+  const n = teacher.picked.size;
+  const all = n > 0 && n === visits.length;
+  if (teacher.confirm && n) return `<span class="del-q">선택한 기록 ${n}건을 삭제할까요? 삭제하면 되돌릴 수 없어요.</span>
+    <button type="button" class="btn danger small" data-act="del-yes" ${teacher.deleting ? "disabled" : ""}>${teacher.deleting ? "삭제하는 중…" : "삭제"}</button>
+    <button type="button" class="btn small" data-act="del-no">취소</button>`;
+  return `<label class="pick-all"><input type="checkbox" id="pickAll" ${all ? "checked" : ""}> 전체 선택</label>
+    <button type="button" class="btn small" data-act="del-ask" ${n ? "" : "disabled"}>선택한 기록 삭제${n ? ` (${n})` : ""}</button>`;
+}
+// List view: pick whole 학번s and delete every visit they have.
+function listedSids() {
+  return [...document.querySelectorAll("[data-pick-sid]")].map(c => c.dataset.pickSid);
+}
+function sidBarHtml(sids = listedSids()) {
+  [...teacher.pickedSids].forEach(x => { if (!sids.includes(x)) teacher.pickedSids.delete(x); });
+  const n = teacher.pickedSids.size;
+  const total = (teacher.docs || []).filter(d => teacher.pickedSids.has(sidOf(d))).length;
+  if (teacher.confirm && n) return `<span class="del-q">학번 ${n}명의 방문 기록 ${total}건을 모두 삭제할까요? 삭제하면 되돌릴 수 없어요.</span>
+    <button type="button" class="btn danger small" data-act="sid-del-yes" ${teacher.deleting ? "disabled" : ""}>${teacher.deleting ? "삭제하는 중…" : "삭제"}</button>
+    <button type="button" class="btn small" data-act="del-no">취소</button>`;
+  return `<label class="pick-all"><input type="checkbox" id="pickAllSids" ${n && n === sids.length ? "checked" : ""}> 전체 선택</label>
+    <button type="button" class="btn small" data-act="del-ask" ${n ? "" : "disabled"}>선택한 학번 기록 전체 삭제${n ? ` (${n}명)` : ""}</button>`;
+}
+function refreshDelBar() {
+  const bar = document.getElementById("delBar");
+  if (bar) bar.innerHTML = teacher.sel ? delBarHtml() : sidBarHtml();
+}
+async function deletePickedSids() {
+  const db = await getDb();
+  if (!db) return;
+  teacher.deleting = true; refreshDelBar();
+  const failed = new Set();
+  for (const d of (teacher.docs || []).filter(d => teacher.pickedSids.has(sidOf(d)))) {
+    try { await db.collection("visits").doc(d.id).delete(); } catch (e) { failed.add(sidOf(d)); }
+  }
+  teacher.pickedSids = failed; teacher.deleting = false; teacher.confirm = false;
+  renderTeacher();
+}
+async function deletePicked() {
+  const db = await getDb();
+  if (!db) return;
+  teacher.deleting = true; refreshDelBar();
+  const failed = [];
+  for (const id of teacher.picked) {
+    try { await db.collection("visits").doc(id).delete(); } catch (e) { failed.push(id); }
+  }
+  teacher.picked = new Set(failed); teacher.deleting = false; teacher.confirm = false;
+  renderTeacher();
+}
+
+async function saveProfile() {
+  const pf = teacher.pf, sid = (pf.sid || "").trim(), t = k => (pf[k] || "").trim();
+  if (!sid) { teacher.pfMsg = "학번을 먼저 적어 주세요."; return renderTeacher(); }
+  const db = await getDb(); if (!db) return;
+  try {
+    await db.collection("profiles").doc(sid).set({ sid, allergy: t("allergy"), cond: t("cond"), tel: t("tel"), memo: t("memo"), updatedAt: new Date().toISOString() });
+    teacher.pf = {}; teacher.pfMsg = `${sid} 저장했어요.`;
+  } catch (e) { teacher.pfMsg = "저장하지 못했어요. 편집 권한이 있는 계정인지 확인해 주세요."; }
+  renderTeacher();
+}
+async function delProfile(sid) {
+  if (teacher.pfDel !== sid) { teacher.pfDel = sid; return renderTeacher(); }
+  const db = await getDb(); if (!db) return;
+  try { await db.collection("profiles").doc(sid).delete(); teacher.pfMsg = `${sid} 삭제했어요.`; } catch (e) { teacher.pfMsg = "삭제하지 못했어요."; }
+  teacher.pfDel = ""; renderTeacher();
+}
+async function teacherAction(t) {
+  const db = await getDb();
+  if (!db) return;
+  const ref = db.collection("visits").doc(t.dataset.visit);
+  t.disabled = true;
+  try {
+    if (t.dataset.do === "done") await ref.update({ status: "done" });
+    if (t.dataset.do === "reopen") await ref.update({ status: "waiting" });
+    if (t.dataset.do === "grade") await ref.update({ override: t.dataset.grade });
+    const doc = (teacher.docs || []).find(x => x.id === t.dataset.visit);
+    const decide = (status, note = "") => ref.update({ plan: { ...doc.plan, status, note, decidedAt: new Date().toISOString() } });
+    if (t.dataset.do === "plan-ok") await decide("approved");
+    if (t.dataset.do === "plan-see") await decide("see");
+    if (t.dataset.do === "plan-custom") {
+      const note = teacher.customText.trim();
+      if (!note) { t.disabled = false; return; }
+      await decide("custom", note);
+      teacher.customFor = ""; teacher.customText = "";
+    }
+  } catch (e) { t.disabled = false; }
+}
+
+// Teacher screen asks for the password every time it is opened (each page load, and after leaving it). It only keeps students out on the shared tablet:
+// the page source is readable, so it is not real security.
+const TEACHER_PW = "APPA";
+let unlocked = false;
+const teacherUnlocked = () => unlocked;
+function renderLock(msg = "") {
+  document.querySelector(".brand b").textContent = "보건실 선생님 화면";
+  document.getElementById("stepLabel").textContent = "";
+  document.querySelector(".bar").hidden = true;
+  document.querySelector("footer.actions").hidden = true;
+  document.getElementById("screen").innerHTML = `<div><h1>선생님 비밀번호</h1><p class="lead">선생님 화면을 보려면 비밀번호를 입력해 주세요.</p></div>
+    <form id="lockForm" class="q" autocomplete="off">
+      <input type="password" id="f-pw" aria-label="비밀번호" placeholder="비밀번호">
+      ${msg ? `<p class="missing" style="margin:0">${esc(msg)}</p>` : ""}
+      <div class="opts"><button type="submit" class="btn primary">확인</button>
+      <button type="button" class="btn" data-act="student-mode">학생 화면으로</button></div>
+    </form>`;
+  document.getElementById("f-pw").focus();
+}
+document.addEventListener("submit", e => {
+  if (e.target.id !== "lockForm") return;
+  e.preventDefault();
+  if (document.getElementById("f-pw").value.trim() === TEACHER_PW) {
+    unlocked = true;
+    route();
+  } else renderLock("비밀번호가 맞지 않아요.");
+});
+function route() {
+  if (location.hash === "#teacher") setDeviceMode("teacher");
+  if (isTeacherView() && !teacherUnlocked()) { renderLock(); return; }
+  if (isTeacherView()) { renderTeacher(); startTeacher(); return; }
+  document.querySelector(".brand b").textContent = "보건실 자가진단";
+  document.querySelector(".bar").hidden = false;
+  document.querySelector("footer.actions").hidden = false;
+  render();
+}
+window.addEventListener("hashchange", route);
+function backToQueue() {
+  const y = teacher.returnTo ? teacher.returnTo.y : 0;
+  teacher.returnTo = null; teacher.tab = "queue"; teacher.sel = "";
+  renderTeacher(); window.scrollTo(0, y);
+}
+// Browser 뒤로가기 after opening a student's past visits from the queue.
+window.addEventListener("popstate", () => { if (isTeacherView() && teacher.returnTo) backToQueue(); });
+// Hidden way in for the teacher: tap the title five times quickly.
+let brandTaps = [];
+document.querySelector(".brand b").addEventListener("click", () => {
+  const now = Date.now();
+  brandTaps = brandTaps.filter(t => now - t < 3000).concat(now);
+  if (brandTaps.length >= 5 && !isTeacherView()) { brandTaps = []; setDeviceMode("teacher"); route(); }
+});
+// Refresh waiting minutes once a minute.
+setInterval(() => { if (isTeacherView() && teacher.docs && teacher.tab !== "profiles") renderTeacher(); }, 60000);
+
+function planStudentHtml(p) {
+  const names = k => p.items.filter(x => x.kind === k).map(x => x.item);
+  if (p.status === "pending") return `<section class="plan wait"><div class="label">선생님이 처치를 확인하고 있어요…</div>
+    <p>잠시만 이 화면에서 기다려 주세요. 승인되면 여기에 바로 나와요.</p></section>`;
+  if (p.status === "see") return `<section class="plan"><div class="label">선생님이 직접 볼게요</div><p>자리에 앉아 기다려 주세요.</p></section>`;
+  if (p.status === "custom") return `<section class="plan"><div class="label">선생님 안내</div><p>${esc(p.note || "")}</p></section>`;
+  const sup = names("supply"), drug = names("drug"), rest = names("rest");
+  return `<section class="plan ok"><div class="label">선생님이 승인했어요</div><ul>
+    ${sup.length ? `<li><b>${esc(sup.join(", "))}</b>은(는) 물품 바구니에서 직접 가져가세요.</li>` : ""}
+    ${drug.length ? `<li><b>${esc(drug.join(", "))}</b>은(는) 선생님이 직접 줄 거예요. 자리에서 기다려 주세요.</li>` : ""}
+    ${rest.length ? `<li>침대에서 쉬어도 돼요.</li>` : ""}</ul></section>`;
+}
+
+function render() {
+  const screen = document.getElementById("screen");
+  const actions = document.getElementById("actions");
+  const label = document.getElementById("stepLabel");
+  const fill = document.getElementById("barFill");
+  window.scrollTo(0, 0);
+
+  if (state.screen === "start") {
+    label.textContent = ""; fill.style.width = "0%";
+    screen.innerHTML = `
+      <div class="hero">
+        <h1>기다리는 동안<br>몸 상태를 알려 주세요</h1>
+        <p class="lead" style="margin:0">1분 정도 걸려요. 보건 선생님이 미리 보고 더 급한 친구부터 도와줄 수 있어요.</p>
+        <ol class="steps-list">
+          <li>학번 입력</li>
+          <li>위험한 증상이 있는지 확인</li>
+          <li>사람 모형에서 아픈 곳 고르기</li>
+          <li>증상, 아픈 정도, 건강 상태</li>
+          <li>건강 상태와 바라는 것</li>
+        </ol>
+        <p class="note">이 앱은 병을 진단하거나 약을 정하지 않아요. 판단은 보건 선생님이 해요.</p>
+        <p class="note">많이 아프거나 숨쉬기 힘들면 앱을 쓰지 말고 바로 선생님께 말하세요.</p>
+        <div class="summary" style="padding:12px 16px"><b>개인정보 안내</b>
+          <ul style="margin:6px 0 0;padding-left:1.2em;display:grid;gap:4px;font-size:15px">
+            <li>모으는 정보: 학번, 증상·건강 상태 답변 (건강 정보예요)</li>
+            <li>쓰는 일: 보건 선생님이 도와줄 순서를 정하고 돌봐 주는 데만 써요.</li>
+            <li>보는 사람: 보건 선생님(권한이 있는 계정)만 볼 수 있어요.</li>
+            <li>기록은 학교 방침에 따라 보관하고 삭제해요. 보호자 동의가 필요할 수 있어요.</li>
+            <li>동의하지 않으면 이 앱 없이 선생님께 직접 말해도 돼요.</li>
+          </ul></div>
+      </div>`;
+    actions.innerHTML = `<button class="btn primary" data-act="begin">동의하고 시작하기</button>`;
+    return;
+  }
+
+  if (state.screen === "alert") {
+    label.textContent = "위험 신호"; fill.style.width = "100%";
+    const picked = EMERGENCY.filter((_, i) => state.a.red[i]).map(p => p.includes("해치고") ? "선생님과 조용히 이야기하고 싶어요" : p);
+    screen.innerHTML = `
+      <div class="alert">
+        <h2>바로 선생님께 말하세요</h2>
+        <p>남은 질문은 하지 않아도 돼요. 학번만 적고 제출한 뒤, 기다리지 말고 지금 보건 선생님을 부르세요.</p>
+      </div>
+      <section class="q"><div class="label">고른 증상</div>
+        <ul style="margin:0;padding-left:1.2em">${picked.map(p => `<li>${esc(p)}</li>`).join("")}</ul></section>
+      <section class="q"><div class="label">학번</div>
+        <input type="text" inputmode="numeric" maxlength="5" id="f-sid" data-text="sid" value="${esc(state.a.sid)}" autocomplete="off" placeholder="예: 30207">${sidErrHtml(state.a.sid)}</section>`;
+    actions.innerHTML = `<button class="btn" data-act="back">이전</button>
+      <button class="btn danger" data-act="submit">제출하고 선생님 부르기</button>`;
+    return;
+  }
+
+  if (state.screen === "done") {
+    label.textContent = ""; fill.style.width = "100%";
+    const g = triage();
+    const msg = g === "red"
+      ? `<div class="alert"><h2>지금 바로 선생님께 말하세요</h2><p>기다리지 말고 보건 선생님을 부르세요.</p></div>`
+      : `<p class="lead" style="margin:0">자리에 앉아 기다려 주세요. 기다리는 동안 더 아파지면 바로 선생님께 말하세요.</p>`;
+    screen.innerHTML = `
+      <div class="hero">
+        <div class="done-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+        <h1>자가진단이 완료되었습니다</h1>
+        ${msg}
+      </div>
+      ${state.saved === "fail" ? `<section class="q">
+        <p class="note">선생님 화면으로 보내지 못했어요. 이 화면을 선생님께 보여 주세요.</p>
+        <div class="label">선생님 확인용 요약 <span class="chip ${GRADE[g][1]}">${GRADE[g][0]}</span></div>
+        ${summaryHtml()}
+      </section>` : `<p class="note">${state.saved === "ok" ? "답변이 보건 선생님 화면으로 전달됐어요." : "보건 선생님께 보내는 중이에요…"}</p>`}`;
+    if (state.plan) screen.querySelector(".hero").insertAdjacentHTML("beforeend", planStudentHtml(state.plan));
+    const care = g === "green" ? [...new Set((state.a.symptoms || []).map(x => SELF_CARE[x]).filter(Boolean))] : [];
+    if (care.length) screen.querySelector(".hero").insertAdjacentHTML("beforeend",
+      `<section class="care"><div class="label">기다리는 동안 이렇게 해 보세요</div><ul>${care.map(c => `<li>${esc(c)}</li>`).join("")}</ul></section>`);
+    actions.innerHTML = `<button class="btn primary" data-act="restart">다음 학생 시작하기${state.plan?.status === "pending" ? "" : " (30초 후 자동)"}</button>`;
+    return;
+  }
+
+  // question steps
+  const step = STEPS[state.step];
+  // The 학번 sheet comes before page 1, so it has no page number.
+  label.textContent = step.id === "info" ? "시작" : `${state.step} / ${STEPS.length - 1}`;
+  fill.style.width = `${(state.step / (STEPS.length - 1)) * 100}%`;
+  let body = "";
+  if (step.red) {
+    const item = i => `<button type="button" class="opt red-item${step.safety.includes(i) ? " safety-item" : ""}" data-redtog="${i}" aria-pressed="${state.a.red[i] === true}">${esc(EMERGENCY[i])}</button>`;
+    const none = step.red.every(i => state.a.red[i] === false);
+    body = `<div class="red-list">${step.red.filter(i => !step.safety.includes(i)).map(item).join("")}</div>
+      <div class="label" style="font-weight:600">마음과 안전 <small style="font-weight:400;color:var(--muted)">선생님이 조용히 도와줄 거예요</small></div>
+      <div class="red-list">${step.safety.map(item).join("")}</div>
+      <button type="button" class="opt red-none" data-act="allno" aria-pressed="${none}">없어요 (하나도 해당 안 돼요)</button>`;
+  } else if (step.id === "info") {
+    const a = state.a;
+    body = `<section class="q"><label class="label" for="f-sid">학번 <small>학년·반·번호를 붙여서, 예: 30207</small></label>
+      <input type="text" inputmode="numeric" maxlength="5" id="f-sid" data-text="sid" value="${esc(a.sid)}" autocomplete="off" placeholder="30207">${sidErrHtml(a.sid)}</section>` + visibleQs(step).map(renderQ).join("");
+  } else if (step.id === "review") {
+    body = summaryHtml(true);
+  } else {
+    body = visibleQs(step).map(renderQ).join("");
+  }
+  screen.innerHTML = `<div>${step.optional ? `<div class="optional-badge">선택</div>` : ""}<h1${step.titleClass ? ` class="${step.titleClass}"` : ""}>${esc(step.title)}</h1>${step.lead ? `<p class="lead">${esc(step.lead)}</p>` : ""}</div>${body}`;
+
+  const ok = stepComplete(step);
+  const isLast = step.id === "review";
+  actions.innerHTML = `<button class="btn" data-act="back">이전</button>
+    <button class="btn primary" data-act="${isLast ? "submit" : "next"}" ${ok ? "" : "disabled"}>${isLast ? "제출" : "다음"}</button>`;
+}
+
+function summaryHtml(showMissing) {
+  return rowsHtml(summaryRows(), showMissing);
+}
+function rowsHtml(rows, showMissing) {
+  return `<div class="summary"><dl>${rows.map(([k, v]) =>
+    `<dt>${esc(k)}</dt><dd>${v ? esc(v) : (showMissing ? '<span class="missing">답하지 않았어요</span>' : "—")}</dd>`).join("")}</dl></div>`;
+}
+function summaryRows() {
+  const a = state.a;
+  const list = v => (Array.isArray(v) && v.length ? v.join(", ") : "");
+  const withNote = (v, note) => v ? v + (note ? ` (${note})` : "") : "";
+  const id = (a.sid || "").trim();
+  const m = id.match(/^(\d)(\d{2})(\d{2})$/);
+  const who = m ? `${id} (${+m[1]}학년 ${+m[2]}반 ${+m[3]}번)` : id;
+  const red = EMERGENCY.filter((_, i) => a.red[i]);
+  const rows = hasEmergency()
+    ? [["학번", who], ["위험 신호", red.join(" / ")]]
+    : [
+      ["학번", who], ["방문", a.visit], ["위험 신호", red.length ? red.join(" / ") : (a.red.every(v => v === false) ? "없음" : "")],
+      ["불편한 곳", list(a.where)], ["증상", Object.entries(a.sp || {}).filter(([, v]) => v.length).map(([k, v]) => `${k}: ${v.join(", ")}`).join(" / ")], ["어떻게", a.injury],
+      ["아픈 정도", a.pain !== undefined ? `${a.pain} / 10` : ""],
+      ["체온", a.temp === NO_TEMP ? NO_TEMP : (a.temp ? `${a.temp}℃` : "")], ["언제부터", a.since],
+      ["앓는 병", a.registered ? "사전 등록 정보 참고" : list((a.conditions || []).map(c => c === "기타" && a.conditionNote?.trim() ? `기타(${a.conditionNote.trim()})` : c))],
+      ["알레르기", a.registered ? "사전 등록 정보 참고" : withNote(a.allergy, a.allergy === "있어요" && a.allergyNote)],
+      ["오늘 먹은 약", withNote(a.meds, a.meds === "먹었어요" && a.medsNote)], ["식사", a.meal],
+      ["바라는 것", list(a.wish) || "—"], ["보호자 연락", a.guardian || "—"]
+    ];
+  if (!hasEmergency()) [["배 아픈 곳", a.bellyWhere], ["움직임", a.moveAbility], ["걷기", a.walk], ["보이는 것", a.eyeSight], ["부딪힌 뒤 이상", a.headSign]].forEach(r => { if (r[1]) rows.push(r); });
+  return rows;
+}
+
+/* ---------- events ---------- */
+function refreshActions() {
+  // Re-evaluate the primary button without re-rendering inputs (keeps keyboard focus while typing).
+  const btn = document.querySelector('[data-act="next"],[data-act="submit"]');
+  if (!btn || state.screen !== "steps") return;
+  btn.disabled = !stepComplete(STEPS[state.step]);
+}
+
+document.addEventListener("click", e => {
+  const t = e.target.closest("button, .body-part");
+  if (!t) return;
+  if (t.dataset.planCustom) { teacher.customFor = t.dataset.planCustom; teacher.customText = ""; renderTeacher(); document.getElementById("custom-" + t.dataset.planCustom)?.focus(); return; }
+  if (t.dataset.planCancel) { teacher.customFor = ""; return renderTeacher(); }
+  if (t.dataset.visit) return teacherAction(t);
+  if (t.dataset.act === "del-ask") { teacher.confirm = true; return refreshDelBar(); }
+  if (t.dataset.act === "del-no") { teacher.confirm = false; return refreshDelBar(); }
+  if (t.dataset.act === "del-yes") return deletePicked();
+  if (t.dataset.act === "sid-del-yes") return deletePickedSids();
+  if (t.dataset.act === "student-mode") {
+    setDeviceMode(null); unlocked = false;
+    if (teacher.unsub) { teacher.unsub(); teacher.unsub = null; }
+    history.replaceState(null, "", location.pathname + location.search);
+    reset(); return route();
+  }
+  if (t.dataset.act === "prof-save") return saveProfile();
+  if (t.dataset.act === "prof-edit") { teacher.pf = { ...(teacher.profiles[t.dataset.sid] || {}), sid: t.dataset.sid }; teacher.pfMsg = ""; return renderTeacher(); }
+  if (t.dataset.act === "prof-del") return delProfile(t.dataset.sid);
+  if (t.dataset.act === "back-to-queue") return history.state?.fromQueue ? history.back() : backToQueue();
+  if (t.dataset.tab) { teacher.tab = t.dataset.tab; teacher.returnTo = null; return renderTeacher(); }
+  if (t.dataset.hist !== undefined) {
+    // Opened from a queue card: remember where the queue was, so 뒤로가기 lands back on that card.
+    if (t.dataset.fromQueue) { teacher.returnTo = { y: window.scrollY }; history.pushState({ fromQueue: true }, ""); }
+    else if (!t.dataset.hist) teacher.returnTo = null;
+    teacher.tab = "history"; teacher.sel = t.dataset.hist; teacher.picked = new Set(); teacher.pickedSids = new Set(); teacher.confirm = false;
+    renderTeacher(); window.scrollTo(0, 0); return;
+  }
+  const a = state.a;
+  if (t.dataset.sym !== undefined) {
+    a.sp = a.sp || {};
+    const cur = a.sp[t.dataset.sym] || [], v = t.dataset.val;
+    a.sp[t.dataset.sym] = cur.includes(v) ? cur.filter(x => x !== v) : [...cur, v];
+    syncSymptoms();
+    const y = window.scrollY; render(); window.scrollTo(0, y); return;
+  }
+  if (t.dataset.chip === "injury") {
+    const cur = a.injuryChips || [], v = t.dataset.val;
+    a.injuryChips = cur.includes(v) ? cur.filter(x => x !== v)
+      : v === SPONTANEOUS ? [v] : [...cur.filter(x => x !== SPONTANEOUS), v];
+    syncInjury();
+    const y = window.scrollY; render(); window.scrollTo(0, y); return;
+  }
+  if (t.dataset.redtog !== undefined) {
+    // Tapping any sign answers the page: the rest count as "no".
+    const step = STEPS[state.step];
+    step.red.forEach(i => { if (a.red[i] === null) a.red[i] = false; });
+    a.red[+t.dataset.redtog] = !a.red[+t.dataset.redtog];
+    const y = window.scrollY; render(); window.scrollTo(0, y); return;
+  }
+  if (t.dataset.red !== undefined) {
+    a.red[+t.dataset.red] = t.dataset.val === "1";
+    return render();
+  }
+  if (t.dataset.key) {
+    const step = STEPS[state.step];
+    const q = (step.qs || []).find(q => q.key === t.dataset.key);
+    const val = q.type === "scale" ? +t.dataset.val : t.dataset.val;
+    if (q.type === "multi" || q.type === "body") {
+      let cur = a[q.key] || [];
+      if (cur.includes(val)) cur = cur.filter(x => x !== val);
+      else if (q.exclusive && val === q.exclusive) cur = [val];
+      else cur = [...cur.filter(x => x !== q.exclusive), val];
+      a[q.key] = cur;
+      // Drop symptoms that no longer belong to any chosen body part.
+      if (q.key === "where" && a.sp) { Object.keys(a.sp).forEach(k => { if (k !== "몸 전체" && !a.where.includes(k)) delete a.sp[k]; }); syncSymptoms(); }
+    } else {
+      a[q.key] = (a[q.key] === val && q.required === false) ? undefined : val;
+    }
+    const y = window.scrollY; render(); window.scrollTo(0, y);
+    return;
+  }
+  switch (t.dataset.act) {
+    case "begin": state.screen = "steps"; state.step = 0; break;
+    case "allno": STEPS[state.step].red.forEach(i => { a.red[i] = false; }); break;
+    case "next":
+      if (STEPS[state.step].red && hasEmergency()) { state.screen = "alert"; break; }
+      if (STEPS[state.step].id === "info") {
+        t.disabled = true;
+        isRegistered(state.a.sid).then(reg => { state.a.registered = reg; state.step++; render(); });
+        return;
+      }
+      state.step++; break;
+    case "back":
+      if (state.screen === "alert") { state.screen = "steps"; break; }
+      if (state.step === 0) { state.screen = "start"; break; }
+      state.step--; break;
+    case "submit":
+      state.screen = "done"; state.saved = "saving";
+      // Shared tablet: saveVisit starts a 30-second return to the start screen, after the teacher answers when care needs approval.
+      clearTimeout(state.timer);
+      saveVisit(); break;
+    case "flip": { bodySide = bodySide === "front" ? "back" : "front"; const y = window.scrollY; render(); window.scrollTo(0, y); return; }
+    case "restart": return reset();
+    default: return;
+  }
+  if (t.dataset.act === "allno") { const y = window.scrollY; render(); window.scrollTo(0, y); return; }
+  render();
+});
+
+document.addEventListener("keydown", e => {
+  if ((e.key === "Enter" || e.key === " ") && e.target.classList?.contains("body-part")) {
+    e.preventDefault();
+    const val = e.target.dataset.val;
+    e.target.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+    document.querySelector(`.body-part[data-val="${val}"]`)?.focus();
+  }
+});
+
+document.addEventListener("change", e => {
+  const el = e.target;
+  if (el.dataset.pick) { el.checked ? teacher.picked.add(el.dataset.pick) : teacher.picked.delete(el.dataset.pick); teacher.confirm = false; refreshDelBar(); }
+  if (el.dataset.pickSid) { el.checked ? teacher.pickedSids.add(el.dataset.pickSid) : teacher.pickedSids.delete(el.dataset.pickSid); teacher.confirm = false; refreshDelBar(); }
+  if (el.id === "pickAllSids") {
+    teacher.pickedSids = el.checked ? new Set(listedSids()) : new Set(); teacher.confirm = false;
+    document.querySelectorAll("[data-pick-sid]").forEach(c => { c.checked = el.checked; });
+    refreshDelBar();
+  }
+  if (el.id === "pickAll") {
+    teacher.picked = el.checked ? new Set(selectedVisits().map(d => d.id)) : new Set(); teacher.confirm = false;
+    document.querySelectorAll("[data-pick]").forEach(c => { c.checked = el.checked; });
+    refreshDelBar();
+  }
+});
+
+document.addEventListener("input", e => {
+  if (e.target.id === "t-search") {
+    // Update only the results so the search box keeps focus.
+    teacher.q = e.target.value; teacher.sel = "";
+    const box = document.getElementById("histResults");
+    if (box) box.innerHTML = historyHtml();
+    return;
+  }
+  if (e.target.dataset.pf) { teacher.pf[e.target.dataset.pf] = e.target.value; return; }
+  if (e.target.dataset.custom) { teacher.customText = e.target.value; return; }
+  const k = e.target.dataset.text;
+  if (!k) return;
+  state.a[k] = e.target.value;
+  if (k === "injuryNote") syncInjury();
+  if (k === "sid") {
+    // Show the hint once five characters are in, or right away if a non-digit is typed.
+    const v = e.target.value.trim(), err = document.getElementById("sid-err");
+    if (err) err.hidden = !v || validSid(v) || (v.length < 5 && /^\d*$/.test(v));
+  }
+  if (k === "temp") {
+    document.querySelectorAll('[data-key="temp"]').forEach(b => b.setAttribute("aria-pressed", "false"));
+    const err = document.getElementById("temp-err");
+    if (err) err.hidden = tempErrHidden(e.target.value.trim());
+  }
+  refreshActions();
+});
+
+document.addEventListener("toggle", e => { if (e.target.id === "doneList") teacher.showDone = e.target.open; }, true);
+
+state = { screen: "start", step: 0, a: { red: EMERGENCY.map(() => null), sid: "" } };
+route();
+</script>
+
+
+</body></html>
